@@ -14,8 +14,8 @@ tags:
 但是相应的会有多的添加的一些操作这些节点对象的方法。
 如想对get到的结构进行数组相关的操作，就必须要将其转换成数组。
 
-```
+```javascript
 var elems = document.getElementsByTagName(some tag),
 elearr = Array.prototype.slice.call(elems);
 ```
-之后就可以操作elearr这个真正的数组了..
+之后就可以操作`elearr`这个真正的数组了。
