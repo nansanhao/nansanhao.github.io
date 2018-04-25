@@ -1,6 +1,6 @@
 {
-  "name": "南三号的笔记本",
-  "short_name": "南三号的笔记本",
+  "name": "南三号",
+  "short_name": "南三号",
   "description": "A personal blog by engineer",
   "icons": [{
     "src": "icons/pwa_icon_128.png",
