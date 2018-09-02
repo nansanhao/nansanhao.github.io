@@ -167,7 +167,25 @@ tags:
 
 #### 离线应用与客户端缓存
 
-- 
+- 即使网页应用在未联网时仍能够使用的技术
+
+- 判断是否联网的方法：navigator.online
+
+- 应用缓存：使用一个文件列出需要缓存的文件
+
+  - 如果这个文件叫做a.manifest（描述文件以前推荐使用manifest，现在推荐使用appcache）
+
+  - 将文件连接到页面上：
+
+    ```html
+    <html manifest="/a.manifest">
+        
+    </html>
+    ```
+
+  - 对应的对象：appcache
+
+  - 
 
 
 
