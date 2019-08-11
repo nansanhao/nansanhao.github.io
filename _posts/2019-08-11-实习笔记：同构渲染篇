@@ -1,0 +1,46 @@
+---
+layout:     post
+title:      实习笔记：同构渲染篇
+subtitle:   这是笔者在实习中所学习到的和了解的。
+date:       2019-08-11
+author:     南三号
+header-img: img/post-bg-coffee.jpeg
+catalog: true
+tags:
+    - 实习	
+	- 同构渲染
+---
+
+# 实习笔记——同构渲染篇
+
+- ssr（服务端渲染）/csr（客户端渲染）：
+
+  **客户端渲染的过程**：浏览器发请求向后台请求数据，后台返回相应html文件，然后在解析文件的时候，会相应的请求页面所带的样式文件以及js脚本。这是就会拖慢页面的加载时间。并且不利于SEO。
+
+  **服务端渲染的过程**：将页面的内容在服务端就渲染好，传回的页面可以进行直接展示。具体过程为，当客户端向后台发起请求时，后台对页面进行渲染，这个渲染过程包括对页面的解析，如果项目采用了react框架，会需要在后台对页面进行解析，会生成虚拟dom（这和前端是一样的），但是需要操作dom的时候会有所不同，因为node的环境里没有dom，所以这时操作的是字符串，也就是将要返回html页面文件的字符串。
+
+  **后台的react和前端的react区别**：操作dom。都会生成虚拟dom，一个操作的是浏览器的dom，一个是操作字符串。还有就是router的区别，前端的router会依赖于浏览器的网址，后台会依赖请求中的参数。
+
+  **同构渲染防止重复渲染**：**当客户端收到服务端的页面字符串之后，会进行渲染，然后执行js代码，重新生成虚拟dom，但是不会进行重复渲染，原因是`ReactDOM.hydrate(element, container[, callback])`，这个方法会对已经生成的html内容进行hydrate操作，React 会尝试在已有标记上绑定事件监听器。然后对于两个端生成虚拟dom的一致性，是服务端通过返回页面字符串的同时加上`rawData`（经过包装的store），客户端将`rawData`重用来保持一致性。（然后网上看到之前有方式是通过`checksum`来实现避免重复渲染，具体方式是通过对页面处理生成一个唯一的hash值，即`checksum`，如果两个端生成的hash值相同则不重复渲染，看完之后觉得有一些缺点，比如对于一些页面，比如推荐，很难保持两次访问的数据获取是相同的，还有就是在store方面会执行第二次生成过程）
+
+  **redux的同构渲染解决方案：**同构渲染中，我们知道react提供的相关的api有`renderToString`和`hydrate`，同样的，redux也提供了同构渲染中store复用的解决方案：
+
+  服务端通过`store.getState()`将store中的数据获取到，然后一同发回给前端。如下：
+
+  ```js
+  //其中renderFullPage这个方法会在页面字符串中加入一个脚本，这个脚本将window.__PRELOADED_STATE__的值设置为${JSON.stringify(preloadedState).replace(/</g,'\\u003c')}
+  
+  res.send(renderFullPage(html, preloadedState));
+  ```
+
+  之后客户端的任务就是获取`window.__PRELOADED_STATE__`的值，然后删除这个属性，然后使用`createStore(counterApp, preloadedState)`这个函数复用preloadedState，之后采用`hydrate`做复用页面的渲染。
+
+- `isomorphic-style-loader`：一个针对于同构渲染中，服务端样式渲染的库。还可以实现critical css。是通过context注入两个方法用来插入相应的css代码
+
+  同构渲染中：客户端的样式解析一般为`css-loader+style-loader`，而`style-loader`是无法在服务端使用的，所以需要使用到这个同构库。
+
+- ` critical css`：在页面的加载中，头部的css文件加载会阻塞页面，而这些css文件有些内容可能是首屏加载中未用到的。那么将首屏中使用到的最小样式提取出来，再写到header中，然后其他未使用到的样式采用异步加载的形式，这种技术叫做`critical css`。
+
+  实现方案有：webpack插件`html-critical-webpack-plugin`，他会将最小样式表以内联样式的方式加入页面，其他css样式使用link标签preload的方式异步加入。（缺点是内联的样式无法缓存，页面会多次请求样式）
+
+
