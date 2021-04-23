@@ -4,7 +4,7 @@ title:      阅读 Mining Verb-Oriented Commonsense Knowledge
 subtitle:   阅读 Mining Verb-Oriented Commonsense Knowledge所做的笔记。
 date:       2020-10-20
 author:     南三号
-header-img: img/KG-2.jpg
+header-img: img/KG-3.jpg
 catalog: true
 tags:
     - 知识图谱

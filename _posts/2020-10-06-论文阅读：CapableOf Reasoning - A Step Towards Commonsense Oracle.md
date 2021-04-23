@@ -4,7 +4,7 @@ title:      阅读 CapableOf Reasoning - A Step Towards Commonsense Oracle
 subtitle:   阅读 CapableOf Reasoning - A Step Towards Commonsense Oracle所做的笔记。
 date:       2020-09-28
 author:     南三号
-header-img: img/KG-2.jpg
+header-img: img/KG-3.jpg
 catalog: true
 tags:
     - 知识图谱
